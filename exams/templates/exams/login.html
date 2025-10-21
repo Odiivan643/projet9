@@ -1,0 +1,170 @@
+{% extends 'exams/base.html' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        font-family: 'Poppins', sans-serif;
+    }
+    .login-container {
+        max-width: 420px;
+        margin: 60px auto;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 40px 30px;
+        animation: fadeIn 0.8s ease-in-out;
+    }
+    h2 {
+        text-align: center;
+        color: #444;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+    label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 6px;
+        display: block;
+    }
+    input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: 0.3s;
+    }
+    input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 5px rgba(102,126,234,0.4);
+        outline: none;
+    }
+    .btn-primary {
+        width: 100%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border: none;
+        padding: 12px;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-top: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(118,75,162,0.3);
+    }
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin-top: 5px;
+        font-size: 13px;
+        color: #e63946;
+    }
+    .alert-error {
+        background: #ffe6e6;
+        color: #c0392b;
+        padding: 10px 14px;
+        border-radius: 10px;
+        margin-top: 10px;
+        font-size: 14px;
+        border: 1px solid #f5c6cb;
+    }
+    p {
+        text-align: center;
+        margin-top: 18px;
+        color: #555;
+    }
+    p a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    p a:hover {
+        text-decoration: underline;
+    }
+    .middleware-card {
+        background: rgba(255,255,255,0.9);
+        border-radius: 16px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        padding: 20px 25px;
+        margin-top: 30px;
+    }
+    .middleware-card h4 {
+        color: #667eea;
+        margin-bottom: 12px;
+    }
+    .middleware-card ul {
+        list-style: none;
+        padding-left: 0;
+        color: #666;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+    .middleware-card strong {
+        color: #444;
+    }
+    @keyframes fadeIn {
+        from {opacity: 0; transform: translateY(10px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+</style>
+
+<div class="login-container">
+    <h2>🔐 Connexion</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_username">Nom d'utilisateur</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <ul class="errorlist">
+                    {% for error in form.username.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-group" style="margin-top: 15px;">
+            <label for="id_password">Mot de passe</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+                <ul class="errorlist">
+                    {% for error in form.password.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+        
+        <button type="submit" class="btn-primary">Se connecter</button>
+    </form>
+    
+    <p>Pas encore de compte ?  
+        <a href="{% url 'register' %}">Inscrivez-vous ici</a>
+    </p>
+</div>
+
+<div class="middleware-card">
+    <h4>🛡️ Middleware en action :</h4>
+    <ul>
+        <li><strong>CSRF Protection :</strong> Le token {% verbatim %}{% csrf_token %}{% endverbatim %} protège contre les attaques</li>
+        <li><strong>Session Management :</strong> Votre session sera créée automatiquement</li>
+        <li><strong>Logging :</strong> Cette requête est enregistrée dans les logs</li>
+    </ul>
+</div>
+{% endblock %}

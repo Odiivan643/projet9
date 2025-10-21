@@ -1,0 +1,60 @@
+{% extends 'exams/base.html' %}
+
+{% block title %}Mes résultats{% endblock %}
+
+{% block content %}
+<h1 style="color: #667eea; margin-bottom: 30px;">📈 Mes résultats</h1>
+
+{% if sessions %}
+    <div style="display: grid; gap: 25px;">
+        {% for session in sessions %}
+            <div class="card" style="border-left: 4px solid {% if session.is_passed %}#28a745{% else %}#dc3545{% endif %};">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+                    <div style="flex: 1;">
+                        <h3 style="color: #333; margin: 0 0 10px 0;">{{ session.exam.title }}</h3>
+                        <div style="color: #666; font-size: 14px;">
+                            📅 Passé le {{ session.finished_at|date:"d/m/Y à H:i" }}
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 36px; font-weight: bold; color: {% if session.is_passed %}#28a745{% else %}#dc3545{% endif %};">
+                            {{ session.score|floatformat:0 }}%
+                        </div>
+                        <span class="badge {% if session.is_passed %}badge-success{% else %}badge-danger{% endif %}" style="margin-top: 5px;">
+                            {% if session.is_passed %}✅ Réussi{% else %}❌ Échoué{% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px;">
+                        <div style="font-size: 12px; color: #666;">⏱️ Durée</div>
+                        <div style="font-weight: bold; color: #333;">{{ session.duration|floatformat:0 }} min</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px;">
+                        <div style="font-size: 12px; color: #666;">❓ Questions</div>
+                        <div style="font-weight: bold; color: #333;">{{ session.exam.questions.count }}</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px;">
+                        <div style="font-size: 12px; color: #666;">🎯 Requis</div>
+                        <div style="font-weight: bold; color: #333;">{{ session.exam.passing_score }}%</div>
+                    </div>
+                </div>
+                
+                <a href="{% url 'exam_result' session.id %}" class="btn btn-primary" style="width: 100%;">
+                    👁️ Voir les détails
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card" style="text-align: center; padding: 60px;">
+        <div style="font-size: 64px; margin-bottom: 20px;">📊</div>
+        <h3 style="color: #666; margin-bottom: 15px;">Aucun résultat pour le moment</h3>
+        <p style="color: #999; margin-bottom: 25px;">Commencez un examen pour voir vos résultats ici</p>
+        <a href="{% url 'exam_list' %}" class="btn btn-primary">
+            📚 Voir les examens disponibles
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

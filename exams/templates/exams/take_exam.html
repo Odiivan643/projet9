@@ -1,0 +1,103 @@
+{% extends 'exams/base.html' %}
+
+{% block title %}{{ exam.title }} - En cours{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="margin: 0 0 10px 0;">{{ exam.title }}</h2>
+                <div>⏱️ Durée: {{ exam.duration }} minutes | ❓ Questions: {{ questions.count }}</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 14px; opacity: 0.9;">Session ID:</div>
+                <div style="font-size: 12px; font-family: monospace;">{{ session.id }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <form method="post" id="examForm">
+        {% csrf_token %}
+        
+        {% for question in questions %}
+            <div class="card" style="margin-bottom: 25px; border-left: 4px solid {% if question.id in answered_dict %}#28a745{% else %}#667eea{% endif %};">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                    <h3 style="color: #333; margin: 0;">
+                        Question {{ forloop.counter }} 
+                        <span style="font-size: 14px; color: #666; font-weight: normal;">({{ question.points }} point{{ question.points|pluralize }})</span>
+                    </h3>
+                    {% if question.id in answered_dict %}
+                        <span class="badge badge-success">✓ Répondu</span>
+                    {% endif %}
+                </div>
+                
+                <p style="font-size: 18px; line-height: 1.6; margin-bottom: 20px; color: #333;">
+                    {{ question.text }}
+                </p>
+                
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    {% for choice in question.choices.all %}
+                        <label style="display: flex; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 8px; cursor: pointer; transition: all 0.3s; border: 2px solid transparent;"
+                               onmouseover="this.style.background='#e9ecef'; this.style.borderColor='#667eea';"
+                               onmouseout="this.style.background='#f8f9fa'; if(!this.querySelector('input').checked) this.style.borderColor='transparent';">
+                            <input type="radio" 
+                                   name="question_{{ question.id }}" 
+                                   value="{{ choice.id }}"
+                                   {% if answered_dict|get:question.id == choice.id %}checked{% endif %}
+                                   style="margin-right: 12px; width: 20px; height: 20px; cursor: pointer;"
+                                   onchange="this.closest('label').style.borderColor='#667eea'; this.closest('label').style.background='#e3f2fd';">
+                            <span style="flex: 1; font-size: 16px;">{{ choice.text }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+        
+        <div class="card" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+            <h4 style="color: #856404; margin-bottom: 10px;">⚠️ Attention</h4>
+            <p style="color: #856404; margin: 0;">
+                Assurez-vous d'avoir répondu à toutes les questions avant de soumettre. 
+                Une fois soumis, vous ne pourrez plus modifier vos réponses.
+            </p>
+        </div>
+        
+        <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <button type="submit" class="btn btn-success" style="flex: 1; font-size: 18px; padding: 15px;"
+                    onclick="return confirm('Êtes-vous sûr de vouloir soumettre votre examen ?');">
+                ✅ Soumettre l'examen
+            </button>
+            <a href="{% url 'exam_list' %}" class="btn btn-secondary" style="padding: 15px 30px; font-size: 18px;">
+                ❌ Annuler
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+// Sauvegarder automatiquement dans le stockage local (optionnel)
+document.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        // Mettre à jour le style du label parent
+        const labels = this.closest('.card').querySelectorAll('label');
+        labels.forEach(label => {
+            label.style.borderColor = 'transparent';
+            label.style.background = '#f8f9fa';
+        });
+        this.closest('label').style.borderColor = '#667eea';
+        this.closest('label').style.background = '#e3f2fd';
+        
+        // Mettre à jour le badge "Répondu"
+        const questionCard = this.closest('.card');
+        const badge = questionCard.querySelector('.badge');
+        if (!badge) {
+            const header = questionCard.querySelector('h3').parentElement;
+            header.innerHTML += '<span class="badge badge-success">✓ Répondu</span>';
+        }
+        
+        // Changer la couleur de la bordure gauche
+        questionCard.style.borderLeftColor = '#28a745';
+    });
+});
+</script>
+{% endblock %}

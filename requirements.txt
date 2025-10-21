@@ -1,0 +1,4 @@
+# Créer le fichier avec les dépendances
+cat > requirements.txt << EOF
+Django==5.2.7
+EOF

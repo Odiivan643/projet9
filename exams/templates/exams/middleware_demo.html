@@ -1,0 +1,237 @@
+{% extends 'exams/base.html' %}
+
+{% block title %}Démonstration des Middlewares{% endblock %}
+
+{% block content %}
+<h1 style="color: #667eea; margin-bottom: 30px;">🔧 Démonstration des Middlewares Django</h1>
+
+<div class="card" style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);">
+    <h2 style="margin-bottom: 20px;">🛡️ Middlewares actifs sur cette application</h2>
+    <div style="display: grid; gap: 15px;">
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745;">
+            <h4 style="color: #28a745; margin-bottom: 10px;">✅ SessionMiddleware</h4>
+            <p style="color: #666; line-height: 1.6;">Gère automatiquement vos sessions utilisateur. Votre session est sauvegardée automatiquement sans code supplémentaire.</p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745;">
+            <h4 style="color: #28a745; margin-bottom: 10px;">✅ AuthenticationMiddleware</h4>
+            <p style="color: #666; line-height: 1.6;">Associe automatiquement chaque requête à l'utilisateur connecté. Accès via <code>request.user</code></p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745;">
+            <h4 style="color: #28a745; margin-bottom: 10px;">✅ CsrfViewMiddleware</h4>
+            <p style="color: #666; line-height: 1.6;">Protection automatique contre les attaques CSRF. Chaque formulaire est protégé avec un token unique.</p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea;">
+            <h4 style="color: #667eea; margin-bottom: 10px;">🔧 LoggingMiddleware (Personnalisé)</h4>
+            <p style="color: #666; line-height: 1.6;">Enregistre automatiquement toutes les requêtes HTTP avec l'utilisateur, l'heure et la durée.</p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea;">
+            <h4 style="color: #667eea; margin-bottom: 10px;">🔧 SessionSecurityMiddleware (Personnalisé)</h4>
+            <p style="color: #666; line-height: 1.6;">Renforce la sécurité des sessions : détection d'inactivité, validation d'IP, rotation de clés.</p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea;">
+            <h4 style="color: #667eea; margin-bottom: 10px;">🔧 ErrorHandlingMiddleware (Personnalisé)</h4>
+            <p style="color: #666; line-height: 1.6;">Gère les erreurs de manière centralisée et affiche des pages d'erreur personnalisées.</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">📊 Informations de votre session actuelle</h2>
+    <table>
+        <tr>
+            <th>Propriété</th>
+            <th>Valeur</th>
+        </tr>
+        <tr>
+            <td><strong>Session Key</strong></td>
+            <td><code>{{ session_info.session_key }}</code></td>
+        </tr>
+        <tr>
+            <td><strong>Dernière activité</strong></td>
+            <td>{{ session_info.last_activity|default:"Non enregistrée" }}</td>
+        </tr>
+        <tr>
+            <td><strong>Adresse IP</strong></td>
+            <td><code>{{ session_info.session_ip|default:"Non enregistrée" }}</code></td>
+        </tr>
+        <tr>
+            <td><strong>Examen en cours</strong></td>
+            <td>
+                {% if session_info.exam_in_progress %}
+                    <span class="badge badge-warning">✏️ Oui</span>
+                {% else %}
+                    <span class="badge badge-success">✅ Non</span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Utilisateur</strong></td>
+            <td><strong>{{ user.username }}</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Authentifié</strong></td>
+            <td><span class="badge badge-success">✅ Oui</span></td>
+        </tr>
+    </table>
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">💡 Comparaison : Sans vs Avec Middlewares</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+        <div>
+            <h3 style="color: #dc3545; margin-bottom: 15px;">❌ Sans Middlewares</h3>
+            <div style="background: #f8d7da; padding: 20px; border-radius: 8px; height: 100%;">
+                <pre style="margin: 0; font-size: 13px; line-height: 1.8; color: #721c24; white-space: pre-wrap;">
+def my_view(request):
+    # Vérifier l'authentification
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    # Logger la requête
+    logger.info(f"{request.user} - {request.path}")
+    
+    # Vérifier CSRF manuellement
+    if request.method == 'POST':
+        csrf_token = request.POST.get('csrf')
+        if not verify_csrf(csrf_token):
+            return HttpResponse('CSRF Error', status=403)
+    
+    # Gérer les erreurs
+    try:
+        # Logique métier
+        pass
+    except Exception as e:
+        logger.error(str(e))
+        return render('error.html')
+    
+    # Mettre à jour la session
+    request.session['last_activity'] = now()
+    request.session.save()
+    
+    return render(request, 'template.html')
+                </pre>
+            </div>
+        </div>
+        
+        <div>
+            <h3 style="color: #28a745; margin-bottom: 15px;">✅ Avec Middlewares Django</h3>
+            <div style="background: #d4edda; padding: 20px; border-radius: 8px; height: 100%;">
+                <pre style="margin: 0; font-size: 13px; line-height: 1.8; color: #155724; white-space: pre-wrap;">
+@login_required  # Authentification automatique
+def my_view(request):
+    # Tout est géré automatiquement par les middlewares :
+    # ✅ Authentification
+    # ✅ CSRF protection
+    # ✅ Logging des requêtes
+    # ✅ Gestion des sessions
+    # ✅ Gestion des erreurs
+    
+    # Vous écrivez seulement la logique métier
+    return render(request, 'template.html')
+                </pre>
+                <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 6px; border-left: 4px solid #28a745;">
+                    <strong style="color: #28a745;">Économie :</strong>
+                    <ul style="margin: 10px 0 0 20px; color: #155724;">
+                        <li>90% moins de code</li>
+                        <li>0 duplication</li>
+                        <li>Sécurité garantie</li>
+                        <li>Maintenance facile</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="background: #e3f2fd;">
+    <h2 style="margin-bottom: 20px; color: #1976d2;">📝 Fichier django.log (Logs en temps réel)</h2>
+    <p style="color: #666; margin-bottom: 15px;">
+        Toutes les requêtes sont automatiquement enregistrées dans le fichier <code>django.log</code> 
+        grâce au middleware de logging personnalisé.
+    </p>
+    <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; color: #00ff00; font-family: monospace; font-size: 13px; overflow-x: auto;">
+        <div>[INFO] 2025-10-21 12:30:45 middleware ➡️ GET /exams/ | User: {{ user.username }}</div>
+        <div>[INFO] 2025-10-21 12:30:45 middleware ⬅️ Status 200 | Durée: 0.045s</div>
+        <div>[INFO] 2025-10-21 12:31:12 middleware ➡️ POST /exam/1/start/ | User: {{ user.username }}</div>
+        <div>[INFO] 2025-10-21 12:31:12 middleware ⬅️ Status 302 | Durée: 0.089s</div>
+        <div>[INFO] 2025-10-21 12:35:20 middleware ➡️ POST /exam/1/take/ | User: {{ user.username }}</div>
+        <div>[INFO] 2025-10-21 12:35:21 middleware ⬅️ Status 302 | Durée: 0.234s</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">🔐 Démonstration de la protection CSRF</h2>
+    <p style="color: #666; margin-bottom: 20px;">
+        Chaque formulaire de cette application est automatiquement protégé par un token CSRF unique 
+        généré par le middleware <code>CsrfViewMiddleware</code>.
+    </p>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+            <h4 style="margin-bottom: 10px;">Sans CSRF Token ❌</h4>
+            <div style="background: #f8d7da; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
+                <code style="color: #721c24;">&lt;form method="post"&gt;<br>&nbsp;&nbsp;...<br>&lt;/form&gt;</code>
+                <p style="margin-top: 10px; color: #721c24; font-size: 14px;">
+                    ⚠️ Vulnérable aux attaques CSRF
+                </p>
+            </div>
+        </div>
+        
+        <div>
+            <h4 style="margin-bottom: 10px;">Avec CSRF Token ✅</h4>
+            <div style="background: #d4edda; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745;">
+                <code style="color: #155724;">&lt;form method="post"&gt;<br>&nbsp;&nbsp;{% verbatim %}{% csrf_token %}{% endverbatim %}<br>&nbsp;&nbsp;...<br>&lt;/form&gt;</code>
+                <p style="margin-top: 10px; color: #155724; font-size: 14px;">
+                    ✅ Protégé automatiquement
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="background: linear-gradient(135deg, #28a74515 0%, #20c99715 100%);">
+    <h2 style="margin-bottom: 20px; color: #28a745;">✨ Avantages des Middlewares</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        <div style="background: white; padding: 20px; border-radius: 8px;">
+            <div style="font-size: 36px; margin-bottom: 10px;">🎯</div>
+            <h4 style="color: #333; margin-bottom: 10px;">Centralisation</h4>
+            <p style="color: #666; font-size: 14px;">Toute la logique de sécurité et de gestion est centralisée en un seul endroit</p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px;">
+            <div style="font-size: 36px; margin-bottom: 10px;">♻️</div>
+            <h4 style="color: #333; margin-bottom: 10px;">Réutilisabilité</h4>
+            <p style="color: #666; font-size: 14px;">Un middleware s'applique automatiquement à toutes les vues</p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px;">
+            <div style="font-size: 36px; margin-bottom: 10px;">🛡️</div>
+            <h4 style="color: #333; margin-bottom: 10px;">Sécurité</h4>
+            <p style="color: #666; font-size: 14px;">Protection automatique contre les vulnérabilités courantes</p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px;">
+            <div style="font-size: 36px; margin-bottom: 10px;">⚡</div>
+            <h4 style="color: #333; margin-bottom: 10px;">Performance</h4>
+            <p style="color: #666; font-size: 14px;">Optimisation automatique des requêtes et du cache</p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px;">
+            <div style="font-size: 36px; margin-bottom: 10px;">🧹</div>
+            <h4 style="color: #333; margin-bottom: 10px;">Code propre</h4>
+            <p style="color: #666; font-size: 14px;">Moins de duplication, code plus maintenable</p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px;">
+            <div style="font-size: 36px; margin-bottom: 10px;">📊</div>
+            <h4 style="color: #333; margin-bottom: 10px;">Monitoring</h4>
+            <p style="color: #666; font-size: 14px;">Logs et statistiques automatiques sur toutes les requêtes</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

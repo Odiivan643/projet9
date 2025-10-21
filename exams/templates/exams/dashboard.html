@@ -1,0 +1,90 @@
+{% extends 'exams/base.html' %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block content %}
+<h1 style="color: #667eea; margin-bottom: 30px;">📊 Tableau de bord</h1>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 30px;">
+    <div class="card" style="text-align: center; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);">
+        <div style="font-size: 48px; margin-bottom: 10px;">📝</div>
+        <h2 style="color: #667eea; margin-bottom: 5px;">{{ total_exams_taken }}</h2>
+        <p style="color: #666;">Examens passés</p>
+    </div>
+    
+    <div class="card" style="text-align: center; background: linear-gradient(135deg, #28a74515 0%, #20c99715 100%);">
+        <div style="font-size: 48px; margin-bottom: 10px;">✅</div>
+        <h2 style="color: #28a745; margin-bottom: 5px;">{{ total_exams_passed }}</h2>
+        <p style="color: #666;">Examens réussis</p>
+    </div>
+    
+    <div class="card" style="text-align: center; background: linear-gradient(135deg, #ffc10715 0%, #ff851b15 100%);">
+        <div style="font-size: 48px; margin-bottom: 10px;">📈</div>
+        <h2 style="color: #ffc107; margin-bottom: 5px;">{{ avg_score }}%</h2>
+        <p style="color: #666;">Score moyen</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">📋 Activité récente</h2>
+    
+    {% if recent_sessions %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Examen</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                    <th>Score</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in recent_sessions %}
+                    <tr>
+                        <td><strong>{{ session.exam.title }}</strong></td>
+                        <td>{{ session.started_at|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            {% if session.status == 'completed' %}
+                                <span class="badge badge-success">Terminé</span>
+                            {% elif session.status == 'in_progress' %}
+                                <span class="badge badge-warning">En cours</span>
+                            {% else %}
+                                <span class="badge badge-danger">Abandonné</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if session.score %}
+                                <strong style="color: {% if session.score >= 60 %}#28a745{% else %}#dc3545{% endif %};">
+                                    {{ session.score|floatformat:0 }}%
+                                </strong>
+                            {% else %}
+                                <span style="color: #999;">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if session.status == 'completed' %}
+                                <a href="{% url 'exam_result' session.id %}" class="btn btn-primary" style="padding: 6px 12px; font-size: 14px;">
+                                    Voir détails
+                                </a>
+                            {% elif session.status == 'in_progress' %}
+                                <a href="{% url 'take_exam' session.exam.id %}" class="btn btn-success" style="padding: 6px 12px; font-size: 14px;">
+                                    Reprendre
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div style="text-align: center; padding: 40px; color: #999;">
+            <div style="font-size: 48px; margin-bottom: 15px;">📭</div>
+            <p>Aucune activité récente</p>
+            <a href="{% url 'exam_list' %}" class="btn btn-primary" style="margin-top: 15px;">
+                Commencer un examen
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

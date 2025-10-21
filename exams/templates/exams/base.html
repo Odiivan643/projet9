@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Plateforme d'Examens{% endblock %}</title>
+    <style>
+        /* --- Reset & Base --- ipconfig | findstr "IPv4" */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            transition: 0.3s ease;
+        }
+
+        /* --- Container --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Navbar --- */
+        .navbar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            flex-wrap: wrap;
+        }
+
+        .navbar h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar nav {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .navbar nav a {
+            color: white;
+            margin-left: 20px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .navbar nav a:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* --- User info --- */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: white;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* --- Content --- */
+        .content {
+            padding: 50px 60px;
+            background: #f9fafc;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card h2 {
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            display: inline-block;
+            padding: 12px 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        /* --- Tables --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        table th, table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        table th {
+            background: #f3f4f6;
+            color: #667eea;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        table tr:hover {
+            background: #f9f9ff;
+        }
+
+        /* --- Alerts --- */
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 14px 18px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .alert-success {
+            background: #e8f8ee;
+            color: #2f7d32;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #fdeaea;
+            color: #a94442;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-warning {
+            background: #fff8e5;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        .alert-info {
+            background: #e3f6fb;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        /* --- Formulaires --- */
+        form {
+            max-width: 500px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.4);
+            outline: none;
+        }
+
+        .errorlist {
+            list-style: none;
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* --- Badges --- */
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            background: #f8f9fa;
+            padding: 25px;
+            text-align: center;
+            color: #6c757d;
+            border-top: 1px solid #e2e2e2;
+            font-size: 14px;
+        }
+
+        .footer small {
+            display: block;
+            margin-top: 6px;
+            color: #999;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .navbar nav a {
+                margin: 8px 8px 0 0;
+            }
+
+            .content {
+                padding: 25px;
+            }
+
+            table th, table td {
+                font-size: 13px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <h1>🎓 Plateforme d'Examens</h1>
+            <nav>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'exam_list' %}">📚 Examens</a>
+                    <a href="{% url 'dashboard' %}">📊 Tableau de bord</a>
+                    <a href="{% url 'my_results' %}">📈 Mes résultats</a>
+                    <a href="{% url 'middleware_demo' %}">🔧 Middlewares</a>
+                    <div class="user-info">
+                        <div class="user-avatar">{{ user.username.0|upper }}</div>
+                        <span>{{ user.username }}</span>
+                        <a href="{% url 'logout' %}">🚪 Déconnexion</a>
+                    </div>
+                {% else %}
+                    <a href="{% url 'home' %}">🏠 Accueil</a>
+                    <a href="{% url 'login' %}">🔐 Connexion</a>
+                    <a href="{% url 'register' %}">✍️ Inscription</a>
+                {% endif %}
+            </nav>
+        </div>
+
+        <div class="content">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {% if message.tags == 'success' %}✅{% endif %}
+                            {% if message.tags == 'error' %}❌{% endif %}
+                            {% if message.tags == 'warning' %}⚠️{% endif %}
+                            {% if message.tags == 'info' %}ℹ️{% endif %}
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+
+        <div class="footer">
+            <p>© 2025 Plateforme d'Examens - Démonstration des Middlewares Django</p>
+            <small>🔒 Sessions gérées automatiquement | 🛡️ Protection CSRF active | 📝 Logs automatiques</small>
+        </div>
+    </div>
+</body>
+</html>
