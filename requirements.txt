@@ -1,4 +1,12 @@
 # Créer le fichier avec les dépendances
-cat > requirements.txt << EOF
-Django==5.2.7
-EOF
+Django==5.1.2
+
+mysqlclient==2.2.4
+
+gunicorn==23.0.0
+whitenoise==6.7.0
+
+Pillow==11.0.0
+
+
+django-cors-headers==4.4.0

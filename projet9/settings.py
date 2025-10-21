@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-i(d)mbxeyjarq5d8xcy6%08=w@_75i817=)g9)@_bcsruwu#9#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.1.27", "localhost",]
+ALLOWED_HOSTS = ["192.168.1.27", "localhost","https://francene-misguided-evan.ngrok-free.dev"]
 
 
 # Application definition
@@ -38,9 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'exams',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -88,6 +91,17 @@ DATABASES = {
     }
 }
 
+
+
+# Ajoute l'url ton url que ngrok t'a donné
+CORS_ALLOWED_ORIGINS = [
+    "https://francene-misguided-evan.ngrok-free.dev",
+]
+
+# Ajoute l'url ton url que ngrok t'a donné
+CSRF_TRUSTED_ORIGINS = [
+    "https://francene-misguided-evan.ngrok-free.dev",
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
