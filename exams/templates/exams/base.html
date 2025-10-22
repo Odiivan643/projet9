@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Plateforme d'Examens{% endblock %}</title>
     <style>
-        /* --- Reset & Base --- ipconfig | findstr "IPv4" */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -13,310 +14,398 @@
         }
 
         body {
-            font-family: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: #333;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #e8f4f8 0%, #f0f8ff 100%);
+            color: #1e293b;
             min-height: 100vh;
-            padding: 20px;
             line-height: 1.6;
         }
 
         a {
             text-decoration: none;
-            transition: 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* --- Container --- */
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
         /* --- Navbar --- */
         .navbar {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            padding: 20px 40px;
+            background: #ffffff;
+            padding: 16px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: white;
-            flex-wrap: wrap;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
         .navbar h1 {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .navbar nav {
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .navbar nav a {
-            color: white;
-            margin-left: 20px;
-            padding: 8px 14px;
+            color: #64748b;
+            padding: 8px 16px;
             border-radius: 8px;
             font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
         .navbar nav a:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: #f1f5f9;
+            color: #0ea5e9;
         }
 
         /* --- User info --- */
         .user-info {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-left: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 6px 12px;
-            border-radius: 20px;
+            gap: 12px;
+            margin-left: 16px;
+            background: #f8fafc;
+            padding: 6px 12px 6px 6px;
+            border-radius: 50px;
+            border: 1px solid #e2e8f0;
         }
 
         .user-avatar {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: white;
-            color: #667eea;
+            background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 14px;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+        }
+
+        .user-info span {
+            color: #334155;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info a {
+            color: #64748b;
+            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .user-info a:hover {
+            background: #e2e8f0;
+            color: #0ea5e9;
         }
 
         /* --- Content --- */
         .content {
-            padding: 50px 60px;
-            background: #f9fafc;
+            flex: 1;
+            padding: 40px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
         }
 
         .card {
             background: white;
-            border-radius: 14px;
-            padding: 25px 30px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
         }
 
         .card:hover {
-            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
+            border-color: #bfdbfe;
         }
 
         .card h2 {
-            color: #667eea;
+            color: #0f172a;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, #0ea5e9, #3b82f6);
+            border-radius: 2px;
         }
 
         /* --- Buttons --- */
         .btn {
-            display: inline-block;
-            padding: 12px 22px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             border: none;
+            font-family: inherit;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #0ea5e9, #3b82f6);
             color: #fff;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
         }
 
         .btn-success {
-            background: #28a745;
+            background: #10b981;
             color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
         }
 
         .btn-success:hover {
-            background: #218838;
+            background: #059669;
+            transform: translateY(-2px);
         }
 
         .btn-danger {
-            background: #dc3545;
+            background: #ef4444;
             color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: #64748b;
             color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
         }
 
         /* --- Tables --- */
         table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 25px;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
+            border: 1px solid #e2e8f0;
         }
 
         table th, table td {
-            padding: 14px 16px;
+            padding: 16px;
             text-align: left;
-            border-bottom: 1px solid #eee;
         }
 
         table th {
-            background: #f3f4f6;
-            color: #667eea;
+            background: #f8fafc;
+            color: #0f172a;
             font-weight: 600;
-            text-transform: uppercase;
             font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        table tr {
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        table tr:last-child {
+            border-bottom: none;
         }
 
         table tr:hover {
-            background: #f9f9ff;
+            background: #f8fafc;
         }
 
         /* --- Alerts --- */
         .messages {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .alert {
-            padding: 14px 18px;
-            border-radius: 10px;
+            padding: 16px 20px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 15px;
+            gap: 12px;
+            font-size: 14px;
             font-weight: 500;
             margin-bottom: 12px;
+            border: 1px solid;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .alert-success {
-            background: #e8f8ee;
-            color: #2f7d32;
-            border-left: 4px solid #28a745;
+            background: #f0fdf4;
+            color: #166534;
+            border-color: #86efac;
         }
 
         .alert-error {
-            background: #fdeaea;
-            color: #a94442;
-            border-left: 4px solid #dc3545;
+            background: #fef2f2;
+            color: #991b1b;
+            border-color: #fca5a5;
         }
 
         .alert-warning {
-            background: #fff8e5;
-            color: #856404;
-            border-left: 4px solid #ffc107;
+            background: #fffbeb;
+            color: #92400e;
+            border-color: #fcd34d;
         }
 
         .alert-info {
-            background: #e3f6fb;
-            color: #0c5460;
-            border-left: 4px solid #17a2b8;
+            background: #eff6ff;
+            color: #1e40af;
+            border-color: #93c5fd;
         }
 
-        /* --- Formulaires --- */
+        /* --- Forms --- */
         form {
-            max-width: 500px;
+            max-width: 600px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-weight: 600;
-            color: #444;
+            color: #334155;
+            font-size: 14px;
         }
 
         .form-group input,
         .form-group textarea,
         .form-group select {
             width: 100%;
-            padding: 12px;
+            padding: 12px 16px;
             border-radius: 10px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #e2e8f0;
             font-size: 15px;
-            transition: 0.3s;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: white;
         }
 
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.4);
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
             outline: none;
         }
 
         .errorlist {
             list-style: none;
-            color: #dc3545;
-            font-size: 14px;
-            margin-top: 5px;
+            color: #dc2626;
+            font-size: 13px;
+            margin-top: 6px;
+            padding-left: 0;
         }
 
         /* --- Badges --- */
         .badge {
-            display: inline-block;
-            padding: 6px 12px;
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
             border-radius: 50px;
             font-size: 12px;
             font-weight: 600;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.3px;
         }
 
         .badge-success {
-            background: #d4edda;
-            color: #155724;
+            background: #dcfce7;
+            color: #166534;
         }
 
         .badge-danger {
-            background: #f8d7da;
-            color: #721c24;
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         .badge-warning {
-            background: #fff3cd;
-            color: #856404;
+            background: #fef3c7;
+            color: #92400e;
         }
 
         .badge-info {
-            background: #d1ecf1;
-            color: #0c5460;
+            background: #dbeafe;
+            color: #1e40af;
         }
 
         /* --- Footer --- */
         .footer {
-            background: #f8f9fa;
-            padding: 25px;
+            background: white;
+            padding: 24px;
             text-align: center;
-            color: #6c757d;
-            border-top: 1px solid #e2e2e2;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
             font-size: 14px;
+            margin-top: auto;
         }
 
         .footer small {
             display: block;
-            margin-top: 6px;
-            color: #999;
+            margin-top: 8px;
+            color: #94a3b8;
+            font-size: 13px;
         }
 
         /* --- Responsive --- */
@@ -324,20 +413,25 @@
             .navbar {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
+                gap: 16px;
+                padding: 16px 20px;
             }
 
-            .navbar nav a {
-                margin: 8px 8px 0 0;
+            .navbar nav {
+                flex-wrap: wrap;
             }
 
             .content {
-                padding: 25px;
+                padding: 20px;
+            }
+
+            .card {
+                padding: 20px;
             }
 
             table th, table td {
                 font-size: 13px;
-                padding: 10px;
+                padding: 12px;
             }
         }
     </style>

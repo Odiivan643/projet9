@@ -15,6 +15,17 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ===== CONFIGURATION DES MIDDLEWARES =====
+# True = Utilise Django | False = Utilise le code manuel
+USE_SESSION_MIDDLEWARE = False    # Session (connexion, etc.)
+USE_AUTH_MIDDLEWARE = True       # Authentification (request.user)
+USE_CSRF_MIDDLEWARE = True       # Protection CSRF
+USE_MESSAGES_MIDDLEWARE = True
+
+'exams.replacements.ManualSessionMiddleware',
+# 'exams.replacements.ManualAuthMiddleware',
+'exams.replacements.ManualCsrfMiddleware',
+'exams.replacements.ManualMessageMiddleware',
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -23,15 +34,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-i(d)mbxeyjarq5d8xcy6%08=w@_75i817=)g9)@_bcsruwu#9#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["192.168.1.27", "localhost","https://francene-misguided-evan.ngrok-free.dev"]
-
+if DEBUG:
+    ALLOWED_HOSTS = ["192.168.1.27", "localhost","francene-misguided-evan.ngrok-free.dev"]
+else:
+    ALLOWED_HOSTS = ["francene-misguided-evan.ngrok-free.dev", "odimariano.pythonanywhere.com"]
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -41,21 +54,68 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
+# MIDDLEWARE = [
+#     'corsheaders.middleware.CorsMiddleware',
+#     'django.middleware.common.CommonMiddleware',
+#     'django.middleware.security.SecurityMiddleware',
+#     'django.contrib.sessions.middleware.SessionMiddleware',
+#     'django.middleware.common.CommonMiddleware',
+#     'django.middleware.csrf.CsrfViewMiddleware',
+#     'django.contrib.auth.middleware.AuthenticationMiddleware',
+#     'django.contrib.messages.middleware.MessageMiddleware',
+#     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+#     # Middlewares personnalisés
+#     'projet9.middleware.LoggingMiddleware',
+#     'projet9.middleware.SessionSecurityMiddleware',
+#     'projet9.middleware.ErrorHandlingMiddleware',
+# ] 
+
+# ===== CONSTRUCTION DYNAMIQUE DES MIDDLEWARES =====
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+]
+
+# SESSION
+if USE_SESSION_MIDDLEWARE:
+    MIDDLEWARE.append('django.contrib.sessions.middleware.SessionMiddleware')
+    print("✅ SessionMiddleware Django")
+else:
+    MIDDLEWARE.append('exams.replacements.ManualSessionMiddleware')
+    print("⚠️  SessionMiddleware MANUEL (exams/replacements.py)")
+
+MIDDLEWARE.append('django.middleware.common.CommonMiddleware')
+
+# CSRF
+if USE_CSRF_MIDDLEWARE:
+    MIDDLEWARE.append('django.middleware.csrf.CsrfViewMiddleware')
+    print("✅ CsrfViewMiddleware Django")
+else:
+    MIDDLEWARE.append('exams.replacements.ManualCsrfMiddleware')
+    print("⚠️  CsrfViewMiddleware MANUEL (exams/replacements.py)")
+
+# AUTH
+if USE_AUTH_MIDDLEWARE:
+    MIDDLEWARE.append('django.contrib.auth.middleware.AuthenticationMiddleware')
+    print("✅ AuthenticationMiddleware Django")
+else:
+    MIDDLEWARE.append('exams.replacements.ManualAuthMiddleware')
+    print("⚠️  AuthenticationMiddleware MANUEL (exams/replacements.py)")
+
+# MESSAGES
+if USE_MESSAGES_MIDDLEWARE:
+    MIDDLEWARE.append('django.contrib.messages.middleware.MessageMiddleware')
+    print("✅ MessageMiddleware Django")
+else:
+    MIDDLEWARE.append('exams.replacements.ManualMessageMiddleware')
+    print("⚠️  MessageMiddleware MANUEL (exams/replacements.py)")
+
+MIDDLEWARE.extend([
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Middlewares personnalisés
     'projet9.middleware.LoggingMiddleware',
     'projet9.middleware.SessionSecurityMiddleware',
     'projet9.middleware.ErrorHandlingMiddleware',
-]
+])
 
 ROOT_URLCONF = 'projet9.urls'
 
@@ -80,27 +140,39 @@ WSGI_APPLICATION = 'projet9.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'examen',
-        'USER': 'postgres',
-        'PASSWORD': 'mariano',
-        'HOST': 'localhost', 
-        'PORT': '5432',       
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'examen',
+            'USER': 'postgres',
+            'PASSWORD': 'mariano',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
     }
-}
-
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'Odimariano$projet_db',
+            'USER': 'Odimariano',
+            'PASSWORD': 'G-$yh4rzVR7pz7Y',
+            'HOST': 'Odimariano.mysql.pythonanywhere-services.com',
+        }
+    }
 
 
 # Ajoute l'url ton url que ngrok t'a donné
 CORS_ALLOWED_ORIGINS = [
     "https://francene-misguided-evan.ngrok-free.dev",
+    "https://odimariano.pythonanywhere.com"
 ]
 
 # Ajoute l'url ton url que ngrok t'a donné
 CSRF_TRUSTED_ORIGINS = [
     "https://francene-misguided-evan.ngrok-free.dev",
+    "https://odimariano.pythonanywhere.com"
 ]
 
 # Password validation
